@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/create_status.yaml
+  - include:
+      file: db/changelog/create_tipo.yaml
+  - include:
+      file: db/changelog/create_to_do.yaml

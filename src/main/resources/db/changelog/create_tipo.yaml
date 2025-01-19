@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-tipo
+      author: Bruno
+      changes:
+        - createTable:
+            tableName: tipo
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: tipo
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+        - sql:
+            splitStatements: true
+            stripComments: false
+            sql: |
+              -- Descrição da TABELA "tipo"
+              EXEC sp_addextendedproperty
+                @name = N'MS_Description',
+                @value = 'Tabela para armazenar os diferentes tipos de tarefa',
+                @level0type = N'SCHEMA', @level0name = 'dbo',
+                @level1type = N'TABLE',  @level1name = 'tipo';
+
+              -- Descrição da COLUNA "id"
+              EXEC sp_addextendedproperty
+                @name = N'MS_Description',
+                @value = 'Identificador único do tipo',
+                @level0type = N'SCHEMA', @level0name = 'dbo',
+                @level1type = N'TABLE',  @level1name = 'tipo',
+                @level2type = N'COLUMN', @level2name = 'id';
+
+              -- Descrição da COLUNA "tipo"
+              EXEC sp_addextendedproperty
+                @name = N'MS_Description',
+                @value = 'Nome do tipo (ex. Rotina, Projeto, etc.)',
+                @level0type = N'SCHEMA', @level0name = 'dbo',
+                @level1type = N'TABLE',  @level1name = 'tipo',
+                @level2type = N'COLUMN', @level2name = 'tipo';

@@ -1,0 +1,152 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-to_do
+      author: Bruno
+      changes:
+        - createTable:
+            tableName: to_do
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: titulo
+                  type: VARCHAR(MAX)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: descricao
+                  type: VARCHAR(MAX)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: data_cadastro
+                  type: DATETIME2
+                  constraints:
+                    nullable: false
+              - column:
+                  name: data_atualizacao
+                  type: DATETIME2
+                  constraints:
+                    nullable: true
+              - column:
+                  name: id_usuario
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: status
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: prioridade
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tipo
+                  type: INT
+                  constraints:
+                    nullable: false
+
+        # Cria as chaves estrangeiras
+        - addForeignKeyConstraint:
+            baseTableName: to_do
+            baseColumnNames: status
+            referencedTableName: status
+            referencedColumnNames: id
+            constraintName: fk_todo_status
+
+        - addForeignKeyConstraint:
+            baseTableName: to_do
+            baseColumnNames: tipo
+            referencedTableName: tipo
+            referencedColumnNames: id
+            constraintName: fk_todo_tipo
+
+        - sql:
+            splitStatements: true
+            stripComments: false
+            sql: |
+              -- Descrição da TABELA "to_do"
+              EXEC sp_addextendedproperty
+                @name = N'MS_Description',
+                @value = 'Tabela principal de tarefas que relaciona status e tipo',
+                @level0type = N'SCHEMA', @level0name = 'dbo',
+                @level1type = N'TABLE',  @level1name = 'to_do';
+
+              -- Descrição da COLUNA "id"
+              EXEC sp_addextendedproperty
+                @name = N'MS_Description',
+                @value = 'Identificador único da tarefa',
+                @level0type = N'SCHEMA', @level0name = 'dbo',
+                @level1type = N'TABLE',  @level1name = 'to_do',
+                @level2type = N'COLUMN', @level2name = 'id';
+
+              -- Descrição da COLUNA "titulo"
+              EXEC sp_addextendedproperty
+                @name = N'MS_Description',
+                @value = 'Título da tarefa (campo sem limite de caracteres)',
+                @level0type = N'SCHEMA', @level0name = 'dbo',
+                @level1type = N'TABLE',  @level1name = 'to_do',
+                @level2type = N'COLUMN', @level2name = 'titulo';
+
+              -- Descrição da COLUNA "descricao"
+              EXEC sp_addextendedproperty
+                @name = N'MS_Description',
+                @value = 'Descrição opcional da tarefa (sem limite)',
+                @level0type = N'SCHEMA', @level0name = 'dbo',
+                @level1type = N'TABLE',  @level1name = 'to_do',
+                @level2type = N'COLUMN', @level2name = 'descricao';
+
+              -- Descrição da COLUNA "data_cadastro"
+              EXEC sp_addextendedproperty
+                @name = N'MS_Description',
+                @value = 'Data/hora de criação da tarefa',
+                @level0type = N'SCHEMA', @level0name = 'dbo',
+                @level1type = N'TABLE',  @level1name = 'to_do',
+                @level2type = N'COLUMN', @level2name = 'data_cadastro';
+
+              -- Descrição da COLUNA "data_atualizacao"
+              EXEC sp_addextendedproperty
+                @name = N'MS_Description',
+                @value = 'Data/hora da última atualização da tarefa',
+                @level0type = N'SCHEMA', @level0name = 'dbo',
+                @level1type = N'TABLE',  @level1name = 'to_do',
+                @level2type = N'COLUMN', @level2name = 'data_atualizacao';
+
+              -- Descrição da COLUNA "id_usuario"
+              EXEC sp_addextendedproperty
+                @name = N'MS_Description',
+                @value = 'Identificador do usuário responsável (opcional)',
+                @level0type = N'SCHEMA', @level0name = 'dbo',
+                @level1type = N'TABLE',  @level1name = 'to_do',
+                @level2type = N'COLUMN', @level2name = 'id_usuario';
+
+              -- Descrição da COLUNA "status"
+              EXEC sp_addextendedproperty
+                @name = N'MS_Description',
+                @value = 'ID do status (FK para tabela status)',
+                @level0type = N'SCHEMA', @level0name = 'dbo',
+                @level1type = N'TABLE',  @level1name = 'to_do',
+                @level2type = N'COLUMN', @level2name = 'status';
+
+              -- Descrição da COLUNA "prioridade"
+              EXEC sp_addextendedproperty
+                @name = N'MS_Description',
+                @value = 'Prioridade (inteiro, 1 a 10)',
+                @level0type = N'SCHEMA', @level0name = 'dbo',
+                @level1type = N'TABLE',  @level1name = 'to_do',
+                @level2type = N'COLUMN', @level2name = 'prioridade';
+
+              -- Descrição da COLUNA "tipo"
+              EXEC sp_addextendedproperty
+                @name = N'MS_Description',
+                @value = 'ID do tipo (FK para tabela tipo)',
+                @level0type = N'SCHEMA', @level0name = 'dbo',
+                @level1type = N'TABLE',  @level1name = 'to_do',
+                @level2type = N'COLUMN', @level2name = 'tipo';

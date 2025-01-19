@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-status
+      author: Bruno
+      changes:
+        - createTable:
+            tableName: status
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+        - sql:
+            splitStatements: true
+            stripComments: false
+            sql: |
+              -- Descrição da TABELA "status"
+              EXEC sp_addextendedproperty
+                @name = N'MS_Description',
+                @value = 'Tabela para armazenar os diferentes status das tarefas',
+                @level0type = N'SCHEMA', @level0name = 'dbo',
+                @level1type = N'TABLE',  @level1name = 'status';
+
+              -- Descrição da COLUNA "id"
+              EXEC sp_addextendedproperty
+                @name = N'MS_Description',
+                @value = 'Identificador único do status',
+                @level0type = N'SCHEMA', @level0name = 'dbo',
+                @level1type = N'TABLE',  @level1name = 'status',
+                @level2type = N'COLUMN', @level2name = 'id';
+
+              -- Descrição da COLUNA "status"
+              EXEC sp_addextendedproperty
+                @name = N'MS_Description',
+                @value = 'Nome do status (ex. Pendente, Concluído, etc.)',
+                @level0type = N'SCHEMA', @level0name = 'dbo',
+                @level1type = N'TABLE',  @level1name = 'status',
+                @level2type = N'COLUMN', @level2name = 'status';
