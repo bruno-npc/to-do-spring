@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Controlador REST para a entidade Status.
@@ -68,7 +69,12 @@ public class StatusController {
      */
     @DeleteMapping
     public ResponseEntity<Void> delete(@RequestParam(name = "id") Integer id) {
-        statusService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        Optional<Status> optionalStatus = statusService.findById(id);
+        if (optionalStatus.isPresent()) {
+            statusService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
