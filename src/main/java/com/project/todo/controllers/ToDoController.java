@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Controlador REST para a entidade ToDo (tarefas).
@@ -68,7 +69,12 @@ public class ToDoController {
      */
     @DeleteMapping
     public ResponseEntity<Void> delete(@RequestParam(name = "id") Long id) {
-        toDoService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        Optional<ToDo> optionalToDo = toDoService.findById(id);
+        if (optionalToDo.isPresent()) {
+            toDoService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

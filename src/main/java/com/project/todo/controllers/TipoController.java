@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Controlador REST para a entidade Tipo.
@@ -68,7 +69,12 @@ public class TipoController {
      */
     @DeleteMapping
     public ResponseEntity<Void> delete(@RequestParam(name = "id") Integer id) {
-        tipoService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        Optional<Tipo> optionalTipo = tipoService.findById(id);
+        if (optionalTipo.isPresent()) {
+            tipoService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
