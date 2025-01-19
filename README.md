@@ -67,7 +67,7 @@ Além disso, o projeto oferece DTOs para retornar dados resumidos das tarefas (p
 
    ```bash
    git clone <URL_DO_REPOSITÓRIO>
-   cd todo-project
+   cd to-do-spring
 
 2. Importar o projeto como Maven na IDE.
 3. **Lombok**, habilite o annotation processing na sua IDE (por exemplo, IntelliJ ou Eclipse).
