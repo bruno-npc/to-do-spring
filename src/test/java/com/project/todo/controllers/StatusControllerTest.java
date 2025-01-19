@@ -69,7 +69,7 @@ class StatusControllerTest {
 
         Mockito.when(statusService.findAll()).thenReturn(Arrays.asList(s1, s2));
 
-        mockMvc.perform(get("/todo/status/all")) // sem ?id
+        mockMvc.perform(get("/todo/status/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].status").value("Pendente"))
@@ -96,7 +96,7 @@ class StatusControllerTest {
     void testGetOneStatusNotFound() throws Exception {
         Mockito.when(statusService.findById(99)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("//todo/status?id=99"))
+        mockMvc.perform(get("/todo/status?id=99"))
                 .andExpect(status().isNotFound());
     }
 

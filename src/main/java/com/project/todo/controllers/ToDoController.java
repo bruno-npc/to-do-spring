@@ -1,6 +1,7 @@
 package com.project.todo.controllers;
 
 import com.project.todo.dominio.ToDo;
+import com.project.todo.dto.TaskDTO;
 import com.project.todo.services.ToDoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -76,5 +77,24 @@ public class ToDoController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    /**
+     * Retorna todas as tarefas como DTOs.
+     */
+    @GetMapping("/allresume")
+    public ResponseEntity<List<TaskDTO>> getAllTasksAsDTO() {
+        List<TaskDTO> tasks = toDoService.findAllTasksAsDTO();
+        return ResponseEntity.ok(tasks);
+    }
+
+    /**
+     * Retorna uma tarefa específica pelo ID como DTO.
+     */
+    @GetMapping("/resume")
+    public ResponseEntity<TaskDTO> getTaskByIdAsDTO(@RequestParam(name = "id") Long id) {
+        return toDoService.findTaskByIdAsDTO(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
