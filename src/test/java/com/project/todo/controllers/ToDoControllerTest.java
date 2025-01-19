@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.todo.dominio.Status;
 import com.project.todo.dominio.Tipo;
 import com.project.todo.dominio.ToDo;
+import com.project.todo.dto.TaskDTO;
 import com.project.todo.services.ToDoService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -35,12 +38,11 @@ class ToDoControllerTest {
     private ToDoService toDoService;
 
     @Autowired
-    private ObjectMapper objectMapper; // para converter objetos em JSON
+    private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("POST /todo - deve criar ou atualizar uma tarefa")
     void testCreateOrUpdateToDo() throws Exception {
-        // Dado
         ToDo requestToDo = new ToDo();
         requestToDo.setTitulo("Estudar Lombok");
         requestToDo.setDescricao("Verificar configuração");
@@ -61,10 +63,8 @@ class ToDoControllerTest {
         savedToDo.setPrioridade(5);
         savedToDo.setTipo(requestToDo.getTipo());
 
-        // Quando
         Mockito.when(toDoService.save(any(ToDo.class))).thenReturn(savedToDo);
 
-        // Então
         mockMvc.perform(post("/todo")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestToDo)))
@@ -73,14 +73,12 @@ class ToDoControllerTest {
                 .andExpect(jsonPath("$.titulo").value("Estudar Lombok"))
                 .andExpect(jsonPath("$.prioridade").value(5));
 
-        // Verifica se toDoService.save foi chamado
         Mockito.verify(toDoService).save(any(ToDo.class));
     }
 
     @Test
     @DisplayName("GET /todo - sem id retorna todas as tarefas")
     void testGetAllToDos() throws Exception {
-        // Dado
         ToDo t1 = new ToDo();
         t1.setId(1L);
         t1.setTitulo("Tarefa 1");
@@ -90,8 +88,7 @@ class ToDoControllerTest {
 
         Mockito.when(toDoService.findAll()).thenReturn(Arrays.asList(t1, t2));
 
-        // Quando & Então
-        mockMvc.perform(get("/todo/all")) // sem query param id
+        mockMvc.perform(get("/todo/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].titulo").value("Tarefa 1"))
@@ -103,14 +100,12 @@ class ToDoControllerTest {
     @Test
     @DisplayName("GET /todo?id=10 - deve retornar a tarefa com ID=10")
     void testGetOneToDo() throws Exception {
-        // Dado
         ToDo t = new ToDo();
         t.setId(10L);
         t.setTitulo("Tarefa 10");
 
         Mockito.when(toDoService.findById(10L)).thenReturn(Optional.of(t));
 
-        // Quando & Então
         mockMvc.perform(get("/todo?id=10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(10))
@@ -122,10 +117,8 @@ class ToDoControllerTest {
     @Test
     @DisplayName("GET /todo?id=99 - se não existir retorna 404")
     void testGetOneToDoNotFound() throws Exception {
-        // Dado
         Mockito.when(toDoService.findById(99L)).thenReturn(Optional.empty());
 
-        // Quando & Então
         mockMvc.perform(get("/todo?id=99"))
                 .andExpect(status().isNotFound());
 
@@ -135,13 +128,11 @@ class ToDoControllerTest {
     @Test
     @DisplayName("DELETE /todo?id=10 - exclui a tarefa se existir")
     void testDeleteToDo() throws Exception {
-        // Dado
         ToDo t = new ToDo();
         t.setId(10L);
         t.setTitulo("Tarefa 10");
         Mockito.when(toDoService.findById(10L)).thenReturn(Optional.of(t));
 
-        // Quando & Então
         mockMvc.perform(delete("/todo?id=10"))
                 .andExpect(status().isNoContent());
 
@@ -151,13 +142,40 @@ class ToDoControllerTest {
     @Test
     @DisplayName("DELETE /todo?id=99 - retorna 404 se não encontrado")
     void testDeleteToDoNotFound() throws Exception {
-        // Dado
+
         Mockito.when(toDoService.findById(99L)).thenReturn(Optional.empty());
 
-        // Quando & Então
         mockMvc.perform(delete("/todo?id=99"))
                 .andExpect(status().isNotFound());
 
         Mockito.verify(toDoService, Mockito.never()).deleteById(99L);
     }
+
+    @Test
+    @DisplayName("GET /todo/resume?id=99 - se não existir retorna 404")
+    void testGetOneTaskDTO() throws Exception {
+
+        Mockito.when(toDoService.findTaskByIdAsDTO(99L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/todo/resume?id=99"))
+                .andExpect(status().isNotFound());
+
+        Mockito.verify(toDoService).findTaskByIdAsDTO(99L);
+    }
+
+    @Test
+    @DisplayName("GET /todo/allresume - lista vazia retorna 200 com lista vazia")
+    void testGetAllTasksDTOEmpty() throws Exception {
+        List<TaskDTO> emptyList = Collections.emptyList();
+
+        Mockito.when(toDoService.findAllTasksAsDTO()).thenReturn(emptyList);
+
+        mockMvc.perform(get("/todo/allresume"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()").value(0));
+
+        Mockito.verify(toDoService).findAllTasksAsDTO();
+    }
+
 }
