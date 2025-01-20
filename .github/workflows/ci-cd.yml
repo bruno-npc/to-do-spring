@@ -65,4 +65,4 @@ jobs:
             --region "southamerica-east1" \
             --platform "managed" \
             --allow-unauthenticated \
-            --set-env-vars DB_USERNAME=sqlserver,DB_PASSWORD=123456,DB_URL="jdbc:sqlserver://34.95.138.204:1433;databaseName=todo_db",SERVER_PORT=8080
+            --set-env-vars DB_USERNAME=sqlserver,DB_PASSWORD=123456,DB_URL="jdbc:sqlserver://34.95.138.204:1433;databaseName=todo_db"
