@@ -25,22 +25,26 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -DskipTests
 
-      # 4) Instala e configura gcloud CLI usando service account
+      # 4) Autentica com o Google Cloud
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # 5) Configura o gcloud CLI
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v1
         with:
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
+          install_components: 'beta'  # Opcional: instala componentes beta se necessário
 
-      # 5) Build da imagem e push para Container Registry (gcr.io)
+      # 6) Build da imagem e push para Container Registry (gcr.io) usando Cloud Build
       - name: Build and push image
         run: |
-          # Nome da imagem (mude "todo-spring" se quiser)
           IMAGE="gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo-spring"
-          # Faz build usando Cloud Build e envia para o Container Registry
           gcloud builds submit --pack image="$IMAGE" .
 
-      # 6) Deploy no Cloud Run
+      # 7) Deploy no Cloud Run
       - name: Deploy to Cloud Run
         run: |
           IMAGE="gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo-spring"
