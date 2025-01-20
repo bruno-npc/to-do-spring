@@ -66,7 +66,7 @@ jobs:
             --platform "managed" \
             --allow-unauthenticated \
             --set-env-vars DB_USERNAME=sqlserver,DB_PASSWORD=123456,DB_URL="jdbc:sqlserver://34.95.138.204:1433;databaseName=todo_db;trustServerCertificate=true"
-            --timeout "600s"
+            --timeout "1200s"
 
       # 9) Aguarda e Recupera Logs (Opcional)
       - name: Wait and Fetch Logs
