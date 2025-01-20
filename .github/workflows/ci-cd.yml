@@ -3,7 +3,7 @@ name: Deploy to Cloud Run
 on:
   push:
     branches:
-      - producao   # dispara quando há push na branch "producao"
+      - producao   # Dispara quando há push na branch "producao"
 
 jobs:
   build-and-deploy:
@@ -21,9 +21,13 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      # 2.1) Torna mvnw executável
+      - name: Make mvnw executable
+        run: chmod +x ./mvnw
+
       # 3) Compila o projeto (remova -DskipTests se desejar executar os testes)
       - name: Build with Maven
-        run: mvn clean install -DskipTests
+        run: ./mvnw clean install -DskipTests
 
       # 4) Autentica com o Google Cloud
       - name: Authenticate to Google Cloud
