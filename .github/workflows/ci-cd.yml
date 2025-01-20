@@ -65,7 +65,8 @@ jobs:
             --region "southamerica-east1" \
             --platform "managed" \
             --allow-unauthenticated \
-            --set-env-vars DB_USERNAME=sqlserver,DB_PASSWORD=123456,DB_URL="jdbc:sqlserver://34.95.138.204:1433;databaseName=todo_db;trustServerCertificate=true"
+            --add-cloudsql-instances "curious-arcanum-448401-g4:southamerica-east1:tododb" \
+            --set-env-vars DB_USERNAME=sqlserver,DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_URL="jdbc:sqlserver://localhost:1433;databaseName=todo_db;trustServerCertificate=true" \
             --timeout "1200s"
 
       # 9) Aguarda e Recupera Logs (Opcional)
