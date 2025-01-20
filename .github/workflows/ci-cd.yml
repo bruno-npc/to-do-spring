@@ -65,4 +65,13 @@ jobs:
             --region "southamerica-east1" \
             --platform "managed" \
             --allow-unauthenticated \
-            --set-env-vars DB_USERNAME=sqlserver,DB_PASSWORD=123456,DB_URL="jdbc:sqlserver://34.95.138.204:1433;databaseName=todo_db"
+            --set-env-vars DB_USERNAME=sqlserver,DB_PASSWORD=123456,DB_URL="jdbc:sqlserver://34.95.138.204:1433;databaseName=todo_db;trustServerCertificate=true"
+            --timeout "600s"
+
+      # 9) Aguarda e Recupera Logs (Opcional)
+      - name: Wait and Fetch Logs
+        run: |
+          sleep 30  # Aguarda 30 segundos para o container iniciar
+          REVISION=$(gcloud run revisions list --service todo-spring --region southamerica-east1 --limit=1 --format="value(NAME)")
+          gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=todo-spring AND resource.labels.revision_name=$REVISION" --limit 50 --format "json" > cloud_run_logs.json
+          cat cloud_run_logs.json
