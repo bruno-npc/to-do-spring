@@ -21,7 +21,7 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      # 3) Compila o projeto (caso queira rodar testes: retire o -DskipTests)
+      # 3) Compila o projeto (remova -DskipTests se desejar executar os testes)
       - name: Build with Maven
         run: mvn clean install -DskipTests
 
@@ -36,19 +36,26 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
-          install_components: 'beta'  # Opcional: instala componentes beta se necessário
+          export_default_credentials: true
+          install_components: 'beta'
 
-      # 6) Build da imagem e push para Container Registry (gcr.io) usando Cloud Build
-      - name: Build and push image
+      # 6) Verifica a Autenticação (Opcional)
+      - name: Verify Authentication
+        run: |
+          gcloud auth list
+          gcloud config list
+
+      # 7) Build da imagem e push para Container Registry (gcr.io) usando Buildpacks
+      - name: Build and push image with Buildpacks
         run: |
           IMAGE="gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo-spring"
+          # Utiliza Buildpacks para construir a imagem sem Dockerfile
           gcloud builds submit --pack image="$IMAGE" .
 
-      # 7) Deploy no Cloud Run
+      # 8) Deploy no Cloud Run
       - name: Deploy to Cloud Run
         run: |
           IMAGE="gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo-spring"
-          # Deploy, setando as variáveis de ambiente necessárias
           gcloud run deploy todo-spring \
             --image "$IMAGE" \
             --region "southamerica-east1" \
